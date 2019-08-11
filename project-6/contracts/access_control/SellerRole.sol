@@ -14,7 +14,7 @@ contract SellerRole {
   // Define a struct 'Sellers' by inheriting from 'Roles' library, struct Role
   Roles.Role private sellers;
 
-  // In the constructor make the address that deploys this contract the 1st baker
+  // In the constructor make the address that deploys this contract the 1st seller
   constructor() public {
     _addSeller(msg.sender);
   }
@@ -46,7 +46,7 @@ contract SellerRole {
     emit SellerAdded(account);
   }
 
-  // Define an internal function '_removeSeller' to remove this role, called by 'removeBaker'
+  // Define an internal function '_removeSeller' to remove this role
   function _removeSeller(address account) internal {
     sellers.remove(account);
     emit SellerRemoved(account);

@@ -9,10 +9,10 @@ contract('SupplyChain', function(accounts) {
     const ownerID = accounts[0]
     const originSellerID = accounts[1]
     const originSellerName = "John Doe"
-    const originSellerInformation = "Yarray Valley"
+    const originSellerInformation = "Amal Alorf"
     var productID = sku + upc
     const productNotes = "Best product"
-    const productPrice = web3.toWei(1, "ether")
+    const productPrice = "1";
     var itemState = 0
     const deliveryAgentID = accounts[2]
     const consumerID = accounts[4]
@@ -41,15 +41,6 @@ contract('SupplyChain', function(accounts) {
     it("Testing smart contract function prepareItems() that allows a seller to prepare products", async() => {
         const supplyChain = await SupplyChain.deployed()
 
-        // Declare and Initialize a variable for event
-        var eventEmitted = false
-
-        // Watch the emitted event prepared()
-        var event = supplyChain.prepared()
-        await event.watch((err, res) => {
-            eventEmitted = true
-        })
-
         // Mark an item as prepared by calling function prepareItems()
         await supplyChain.prepareItems(upc, originSellerID, originSellerName, originSellerInformation, productNotes, productPrice)
 
@@ -65,22 +56,14 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferOne[4], originSellerName, 'Error: Missing or Invalid originSellerName')
         assert.equal(resultBufferOne[5], originSellerInformation, 'Error: Missing or Invalid originSellerInformation')
         assert.equal(resultBufferTwo[5], 0, 'Error: Invalid item State')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')
+
     })
 
     // 2nd Test
     it("Testing smart contract function addItemsToOnlineStore() that allows a seller to add items To online store", async() => {
         const supplyChain = await SupplyChain.deployed()
 
-        // Declare and Initialize a variable for event
-        var eventEmitted = false
-
-        // Watch the emitted event Processed()
-        var event = supplyChain.ForSale()
-        await event.watch((err, res) => {
-                eventEmitted = true
-            })
-            // Mark an item as forSale  by calling function addItemsToOnlineStore()
+        // Mark an item as forSale  by calling function addItemsToOnlineStore()
         await supplyChain.addItemsToOnlineStore(upc, { from: originSellerID })
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
@@ -97,29 +80,16 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferOne[4], originSellerName, 'Error: Missing or Invalid originSellerName')
         assert.equal(resultBufferOne[5], originSellerInformation, 'Error: Missing or Invalid originSellerInformation')
         assert.equal(resultBufferTwo[5], 1, 'Error: Invalid item State')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')
+
     })
 
     // 3rd Test
     it("Testing smart contract function buyItems() that allows a consumer to buy items", async() => {
         const supplyChain = await SupplyChain.deployed()
-
-        // Declare and Initialize a variable for event
-        var eventEmitted = false
-
-        // Watch the emitted event Packed()
-        var spldEvent = supplyChain.Sold()
-        await spldEvent.watch((err, res) => {
-            eventEmitted = true
-        })
-        var addConsumerEvent = supplyChain.ConsumerAdded()
-        await addConsumerEvent.watch((err, res) => {
-            eventEmitted = true
-        })
-
-        var paidAmount = web3.toWei("2", "ether")
-            // Mark an item as Packed by calling function packItem()
+        var paidAmount = "2"
         await supplyChain.addConsumer(consumerID, { from: ownerID })
+            // Mark an item as Sold by calling function buyItems()
+
         await supplyChain.buyItems(upc, { from: consumerID, value: paidAmount })
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
@@ -136,25 +106,15 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferOne[5], originSellerInformation, 'Error: Missing or Invalid originSellerInformation')
         assert.equal(resultBufferTwo[5], 2, 'Error: Invalid item State')
         assert.equal(resultBufferTwo[7], consumerID, 'Error: Missing or Invalid consumerID')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')
+
     })
 
     // 4th Test
     it("Testing smart contract function shipItems() that allows a seller to ship items", async() => {
         const supplyChain = await SupplyChain.deployed()
 
-        // Declare and Initialize a variable for event
-
-        var eventEmitted = false
-            // Watch the emitted event Processed()
-        var event = supplyChain.Shipped()
-        await event.watch((err, res) => {
-            eventEmitted = true
-        })
-
-        // Mark an item as ForSale by calling function shipItems()
+        // Mark an item as Shipped by calling function shipItems()
         await supplyChain.shipItems(upc, deliveryAgentID, { from: originSellerID })
-
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
@@ -172,7 +132,7 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferTwo[5], 3, 'Error: Invalid item State')
         assert.equal(resultBufferTwo[6], deliveryAgentID, 'Error: Missing or Invalid deliveryAgentID')
         assert.equal(resultBufferTwo[7], consumerID, 'Error: Missing or Invalid consumerID')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')
+
 
 
     })
@@ -181,20 +141,9 @@ contract('SupplyChain', function(accounts) {
     it("Testing smart contract function DeliverItems() that allows a delivery Agent to deliver the item", async() => {
         const supplyChain = await SupplyChain.deployed()
 
-        // Declare and Initialize a variable for event
-        var eventEmitted = false
-            // Watch the emitted event Processed()
-        var event = supplyChain.Delivered()
-        await event.watch((err, res) => {
-            eventEmitted = true
-        })
-        var addDeliveryAgent = supplyChain.deliveryAgentAdded()
-        await addDeliveryAgent.watch((err, res) => {
-            eventEmitted = true
-        })
-
-        // Mark an item as Sold by calling function buyItem()
         await supplyChain.addDeliveryAgent(deliveryAgentID, { from: ownerID })
+            // Mark an item as Delivered by calling function DeliverItems()
+
         await supplyChain.DeliverItems(upc, { from: deliveryAgentID })
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
@@ -212,21 +161,12 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferTwo[5], 4, 'Error: Invalid item State')
         assert.equal(resultBufferTwo[6], deliveryAgentID, 'Error: Missing or Invalid deliveryAgentID')
         assert.equal(resultBufferTwo[7], consumerID, 'Error: Missing or Invalid consumerID')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')
+
     })
 
     // 6th Test
     it("Testing smart contract function receiveItem() that allows a consumer to receive the item", async() => {
         const supplyChain = await SupplyChain.deployed()
-
-        // Declare and Initialize a variable for event
-        var eventEmitted = false
-            // Watch the emitted event Processed()
-        var event = supplyChain.Received()
-        await event.watch((err, res) => {
-            eventEmitted = true
-        })
-
 
         // Mark an item as Received by calling function receiveItem()
         await supplyChain.receiveItem(upc, { from: consumerID })
@@ -246,7 +186,7 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferTwo[5], 5, 'Error: Invalid item State')
         assert.equal(resultBufferTwo[6], deliveryAgentID, 'Error: Missing or Invalid deliveryAgentID')
         assert.equal(resultBufferTwo[7], consumerID, 'Error: Missing or Invalid consumerID')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')
+
 
     })
 

@@ -1,4 +1,4 @@
-// pragma solidity ^0.4.24;
+
 pragma solidity >=0.4.21 <0.6.0;
 
 // Import the library 'Roles'
@@ -8,9 +8,9 @@ import "./Roles.sol";
 contract ConsumerRole {
  using Roles for Roles.Role;
   // Define 2 events, one for Adding, and other for Removing
-	  event ConsumerAdded(address indexed account);		
+	event ConsumerAdded(address indexed account);		
   event ConsumerRemoved(address indexed account);
-  // Define a struct 'consumers' by inheriting from 'Roles' library, struct Role
+  // Define a struct 'consumers' 
 Roles.Role private consumers;
   // In the constructor make the address that deploys this contract the 1st consumer
   constructor() public {
@@ -46,7 +46,7 @@ Roles.Role private consumers;
 
   // Define an internal function '_removeConsumer' to remove this role, called by 'removeConsumer'
   function _removeConsumer(address account) internal {
-     consumers.remove(account);		    
+    consumers.remove(account);		    
     emit ConsumerRemoved(account);
   }
 }
